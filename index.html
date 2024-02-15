@@ -1,0 +1,161 @@
+<!-- This is the final project of Bat Ball and Wicket game using localStorage and also showing all the moves on page instead of showing on the alert -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>batBallWicket_project</title>
+    <link rel="stylesheet" href="index.css" />
+  </head>
+
+  <body>
+    <h1>Let's play Bat Ball and Wicket game</h1>
+
+    <!--This is the bat button-->
+    <button
+      class="btn"
+      onclick="
+        let computerChoice = cchoice();//Here we have declared another variable computerChoice  
+        let result = getResult('Bat', computerChoice);
+        showAlert('Bat', computerChoice, result) "
+    >
+      <img src="bat1.jpg" alt="Bat Image" class="img-choice" />
+    </button>
+
+    <!--This is the ball button-->
+    <button
+      class="btn"
+      onclick=" 
+        computerChoice = cchoice();
+        result = getResult('Ball', computerChoice);
+        showAlert('Ball', computerChoice, result);"
+    >
+      <img src="ball1.jpg" alt="Ball Image" class="img-choice" />
+    </button>
+
+    <!--This is the wicket button-->
+    <button
+      class="btn"
+      onclick=" 
+        computerChoice = cchoice();
+        result = getResult('Wicket', computerChoice);
+        showAlert('Wicket', computerChoice, result) "
+    >
+      <img src="stump.png" alt="Stump Image" class="img-choice" />
+    </button>
+
+    <h3 id="user-move"></h3>
+    <h3 id="computer-move"></h3>
+    <h3 id="result"></h3>
+    <h3 id="score"></h3>
+
+    <!--This is the reset button-->
+    <button
+      class="reset-btn"
+      onclick=" 
+        localStorage.clear();
+        resetScore();
+        "
+    >
+      Reset
+    </button>
+
+    <script>
+      let score;
+      let scoreStr = localStorage.getItem("score");
+      resetScore(scoreStr);
+
+      function resetScore(scoreStr) {
+        if (scoreStr !== undefined) {
+          score = JSON.parse(scoreStr);
+        } else {
+          score = {
+            Win: 0,
+            Lose: 0,
+            Tie: 0,
+          };
+        }
+        score.displayScore = function () {
+          //Here we are encapsulating the displayScore in score object , displayScore is known as method .
+          return `Win score  ${score.Win} ,
+           Loss score ${score.Lose} ,
+           Tie score ${score.Tie}`;
+        };
+        showAlert();
+      }
+
+      score.displayScore = function () {
+        //Here we are encapsulating the displayScore in score object , displayScore is known as method .
+        return `Win score  ${this.Win} ; 
+           Loss score ${this.Lose} ;
+           Tie score ${this.Tie}`;
+      };
+
+      /*This is the first function, it is used to select the computer's choice  */
+
+      function cchoice() {
+        //let computerChoice;//Here computerChoice is declared as a local variable , because we dont want to make it a global variable // at last we will not use any variable , we will finally return the value.
+        let rndm = Math.random() * 3;
+        if (rndm >= 0 && rndm < 1) {
+          return "Bat";
+        } else if (rndm >= 1 && rndm < 2) {
+          return "Ball";
+        } else {
+          return "Wicket";
+        }
+        //return computerChoice;
+      }
+
+      /*This is the second function , it is used to find the answer on the basis of computer's and user's choice */
+
+      function getResult(userMove, computerMove) {
+        if (userMove === computerMove) {
+          score.Tie++;
+
+          //Here we are increasing the tie value present n the object score
+          return `It's a Tie `;
+        } else if (userMove === "Bat" && computerMove === "Ball") {
+          score.Win++; //Here we are increasing the win value present n the object score
+          return `You win`;
+        } else if (userMove === "Bat" && computerMove === "Wicket") {
+          score.Lose++; //Here we are increasing the lose value present n the object score
+
+          return `You Loss`;
+        } else if (userMove === "Ball" && computerMove === "Bat") {
+          score.Lose++;
+
+          return `You Loss`;
+        } else if (userMove === "Ball" && computerMove === "Wicket") {
+          score.Win++;
+          return `You win`;
+        } else if (userMove === "Wicket" && computerMove === "Ball") {
+          score.Lose++;
+
+          return `You Loss`;
+        } else if (userMove === "Wicket" && computerMove === "Bat") {
+          score.Win++;
+          return `You win`;
+        }
+      }
+
+      /*This is the Third function ,it is the final functon which shows the final alert/result  */
+
+      function showAlert(userMove, computerMove, result2) {
+        localStorage.setItem("score", JSON.stringify(score));
+        document.querySelector("#user-move").innerText =
+          userMove !== undefined ? `Your choice--${userMove}.` : "";
+
+        document.querySelector("#computer-move").innerText =
+          computerMove !== undefined
+            ? `Computer's choice--${computerMove}.`
+            : "";
+
+        document.querySelector("#result").innerText =
+          result2 !== undefined ? result2 : "";
+
+        document.querySelector("#score").innerText = score.displayScore();
+      }
+    </script>
+  </body>
+</html>
